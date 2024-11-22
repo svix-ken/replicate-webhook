@@ -6,7 +6,7 @@ export async function POST(req) {
     // const webhook_timestamp = req.headers.get("webhook-timestamp") ?? "";
     // const webhook_signature = req.headers.get("webhook-signature") ?? "";
 
-    // const body = await req.text();
+    const body = await req.text();
 
     // const signedContent = `${webhook_id}.${webhook_timestamp}.${body}`;
     // const secret = process.env.WEBHOOK_SECRET;
