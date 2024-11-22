@@ -47,7 +47,7 @@ export async function POST(req) {
                 body: JSON.stringify({
                     version: 'image-generation-model-version-id', // Replace with your image generation model version ID
                     input: { text: transcription },
-                    webhook: `${process.env.VERCEL_URL}/api/image-webhook`, // Webhook for image generation
+                    webhook: `replicate-webhook.vercel.app/api/image-webhook`, // Webhook for image generation
                     webhook_events_filter: ['completed'], // Notify only when completed
                 }),
             });
