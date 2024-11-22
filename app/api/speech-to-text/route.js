@@ -7,6 +7,9 @@ const replicate = new Replicate({
  
 // In production and preview deployments (on Vercel), the VERCEL_URL environment variable is set.
 // In development (on your local machine), the NGROK_HOST environment variable is set.
+const WEBHOOK_HOST = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : process.env.SVIX_HOST;
  
 export async function POST(request) {
   if (!process.env.REPLICATE_API_TOKEN) {
@@ -24,7 +27,7 @@ export async function POST(request) {
         audio: audio.url,
         batch_size: 64
     },
-    webhook: `replicate-webhook.vercel.app/api/webhooks/transcription`,
+    webhook: `https://replicate-webhook.vercel.app/api/webhooks/transcription`,
     webhook_events_filter: ["completed"],
   });
  
