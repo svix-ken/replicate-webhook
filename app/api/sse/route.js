@@ -23,6 +23,14 @@ export async function GET(req) {
     }
   });
 
+  const heartbeatInterval = setInterval(() => {
+    controller.enqueue(': keep-alive\n\n'); // Sending a comment to keep the connection alive
+  }, 30000); // 30 seconds
+
+  req.signal.addEventListener('abort', () => {
+    clearInterval(heartbeatInterval);
+  });
+
   // Return the response with the stream and headers
   return new Response(stream, { headers });
 }
