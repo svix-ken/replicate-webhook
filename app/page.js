@@ -64,7 +64,7 @@ export default function Home() {
  
       {error && <div>{error}</div>}
 
-      <span>transcription: {transcription}</span>
+      {/* <span>transcription: {transcription}</span> */}
  
       {prediction && (
         <>
