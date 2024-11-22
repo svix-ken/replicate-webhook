@@ -37,11 +37,11 @@ export async function POST(req) {
         console.log("Received Transcription:", transcription);
 
         try {
-            const response = await fetch("/api/text-to-image", {
+            const response = await fetch("https://replicate-webhook.vercel.app/api/text-to-image", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                version: 'image-generation-model-version-id', // Replace with your image generation model version ID
+                version: '8beff3369e81422112d93b89ca01426147de542cd4684c244b673b105188fe5f', // Replace with your image generation model version ID
                 input: { text: transcription },
                 webhook: `https://replicate-webhook.vercel.app/api/webhooks/image-generation`, // Webhook for image generation
                 webhook_events_filter: ['completed'], // Notify only when completed
