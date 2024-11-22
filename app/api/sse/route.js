@@ -18,7 +18,7 @@ export async function GET(req) {
 
       // Cleanup when the client disconnects
       req.signal.addEventListener('abort', () => {
-        removeClient(client);
+        console.log(client)
       });
     }
   });
