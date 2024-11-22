@@ -39,6 +39,16 @@ export default function Home() {
       console.log(data)
     };
 
+    eventSource.onerror = (error) => {
+      console.error('Error in SSE connection:', error);
+      // Try to reconnect if the connection is closed unexpectedly
+      eventSource.close();
+      setTimeout(() => {
+        const newEventSource = new EventSource('/api/sse');
+        eventSource = newEventSource;
+      }, 3000); // Attempt to reconnect after 3 seconds
+    };
+
     return () => {
       eventSource.close();
     };
