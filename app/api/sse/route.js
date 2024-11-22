@@ -9,6 +9,13 @@ export async function GET(req) {
   headers.set('Cache-Control', 'no-cache');
   headers.set('Connection', 'keep-alive');
 
+  const sendMessage = (message) => {
+    controller.enqueue(encoder.encode(`data: ${message}\n\n`))
+  }
+
+  // Send an initial message
+  sendMessage('Connected to SSE')
+
   // Create a readable stream for SSE
   const stream = new ReadableStream({
     start(controller) {
@@ -24,7 +31,7 @@ export async function GET(req) {
   });
 
   const heartbeatInterval = setInterval(() => {
-    controller.enqueue(': keep-alive\n\n'); // Sending a comment to keep the connection alive
+    sendMessage('keep alive'); // Sending a comment to keep the connection alive
   }, 30000); // 30 seconds
 
   req.signal.addEventListener('abort', () => {

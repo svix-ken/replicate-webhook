@@ -29,6 +29,30 @@ export default function Home() {
       console.error("Error calling API route:", error);
     }
   }
+
+  useEffect(() => {
+    let eventSource = new EventSource('/api/sse');
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      setPrediction(data)
+      console.log(data)
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('Error in SSE connection:', error);
+      // Try to reconnect if the connection is closed unexpectedly
+      eventSource.close();
+      setTimeout(() => {
+        const newEventSource = new EventSource('/api/sse');
+        eventSource = newEventSource;
+      }, 3000); // Attempt to reconnect after 3 seconds
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
  
   return (
     <div className="container max-w-2xl mx-auto p-5">
