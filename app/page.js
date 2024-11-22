@@ -63,8 +63,6 @@ export default function Home() {
       <AudioRecorder transcribe={transcribe}/>
  
       {error && <div>{error}</div>}
-
-      {/* <span>transcription: {transcription}</span> */}
  
       {prediction && (
         <>
@@ -79,7 +77,6 @@ export default function Home() {
               />
             </div>
           )}
-          <p className="py-3 text-sm opacity-50">status: {prediction.status}</p>
         </>
       )}
     </div>
