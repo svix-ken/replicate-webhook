@@ -37,28 +37,50 @@ export async function POST(req) {
         console.log("Received Transcription:", transcription);
 
         try {
-            // Trigger the image generation model
-            const imageResponse = await fetch('https://api.replicate.com/v1/predictions', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Token ${process.env.REPLICATE_API_KEY}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    version: 'image-generation-model-version-id', // Replace with your image generation model version ID
-                    input: { text: transcription },
-                    webhook: `https://replicate-webhook.vercel.app/api/webhooks/image-generation`, // Webhook for image generation
-                    webhook_events_filter: ['completed'], // Notify only when completed
+            const response = await fetch("/api/text-to-image", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                version: 'image-generation-model-version-id', // Replace with your image generation model version ID
+                input: { text: transcription },
+                webhook: `https://replicate-webhook.vercel.app/api/webhooks/image-generation`, // Webhook for image generation
+                webhook_events_filter: ['completed'], // Notify only when completed
                 }),
             });
+        
+            const data = await response.json();
+            if (response.ok) {
+              console.log("Replicate output:", data.output);
+            } else {
+              console.error("Error from API route:", data.error);
+            }
+          } catch (error) {
+            console.error("Error calling API route:", error);
+          }
 
-            const imageData = await imageResponse.json();
-            console.log("Triggered Image Generation:", imageData.id);
+        // try {
+        //     // Trigger the image generation model
+        //     const imageResponse = await fetch('https://api.replicate.com/v1/predictions', {
+        //         method: 'POST',
+        //         headers: {
+        //             Authorization: `Token ${process.env.REPLICATE_API_KEY}`,
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({
+        //             version: 'image-generation-model-version-id', // Replace with your image generation model version ID
+        //             input: { text: transcription },
+        //             webhook: `https://replicate-webhook.vercel.app/api/webhooks/image-generation`, // Webhook for image generation
+        //             webhook_events_filter: ['completed'], // Notify only when completed
+        //         }),
+        //     });
 
-        } catch (imageErr) {
-            console.error("Error triggering image generation:", imageErr.message);
-            return new Response("Error triggering image generation", { status: 500 });
-        }
+        //     const imageData = await imageResponse.json();
+        //     console.log("Triggered Image Generation:", imageData.id);
+
+        // } catch (imageErr) {
+        //     console.error("Error triggering image generation:", imageErr.message);
+        //     return new Response("Error triggering image generation", { status: 500 });
+        // }
     } else {
         console.error("Invalid webhook payload or status not succeeded");
         return new Response("Bad Request", { status: 400 });
