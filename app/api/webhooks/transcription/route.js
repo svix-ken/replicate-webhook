@@ -18,6 +18,7 @@ export async function POST(req) {
         .digest('base64');
 
     try {
+        console.log(expectedSignatures)
         const expectedSignatures = webhook_signature.split(' ').map(sig => sig.split(',')[1]);
         const isValid = expectedSignatures.some(expectedSignature => expectedSignature === computedSignature);
 
