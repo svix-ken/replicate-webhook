@@ -4,9 +4,7 @@ import Replicate from "replicate";
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
- 
-// In production and preview deployments (on Vercel), the VERCEL_URL environment variable is set.
- 
+  
 export async function POST(request) {
   if (!process.env.REPLICATE_API_TOKEN) {
     throw new Error(

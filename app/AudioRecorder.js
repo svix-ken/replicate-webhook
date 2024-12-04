@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from "react";
-import { uploadFile } from '@uploadcare/upload-client';
-
+import * as Bytescale from "@bytescale/sdk";
+import nodeFetch from "node-fetch";
 
 const AudioRecorder = (props) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -75,18 +75,18 @@ const AudioRecorder = (props) => {
     }
   };
 
+  const uploadManager = new Bytescale.UploadManager({
+    fetchApi: nodeFetch, // import nodeFetch from "node-fetch"; // Only required for Node.js. TypeScript: 'nodeFetch as any' may be necessary.
+    apiKey: "public_12a1zCrFyiiAgn9ZGEjEvXdEfic6" // This is your API key.
+  });
+
   const handleUpload = async (audioBlob) => {
     try {
-      const result = await uploadFile(audioBlob, {
-        publicKey: '11a7556a30d6a094bbaf', // Replace with your actual Uploadcare public key
-        store: 'auto', // 'auto' to decide storage based on your settings
-        metadata: {
-          subsystem: 'audio-recorder',
-          description: 'Recorded audio file',
-        },
+      const result = await uploadManager.upload({
+        data: audioBlob,
       });
   
-      props.transcribe(result.cdnUrl)
+      props.transcribe(result.fileUrl)
 
     } catch (error) {
       console.error('Error uploading file:', error);
