@@ -20,7 +20,7 @@ export const broadcast = (data) => {
     if (clients.length === 0) {
       console.log('No clients connected to broadcast to');
     } else {
-      console.log('Broadcasting to', clients.length, 'clients');
+      console.log('broadcast data:', data);
       clients.forEach((client) => {
         // Write to the SSE client stream
         client.res.enqueue(`data: ${JSON.stringify(data)}\n\n`);
