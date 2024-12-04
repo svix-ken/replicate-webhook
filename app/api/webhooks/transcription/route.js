@@ -11,6 +11,7 @@ export async function POST(req) {
     const secret = process.env.WEBHOOK_SECRET;
 
     // Decode the secret
+    console.log(secret)
     const secretBytes = Buffer.from(secret.split('_')[1], "base64");
     const computedSignature = crypto
         .createHmac('sha256', secretBytes)
