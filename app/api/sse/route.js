@@ -12,7 +12,10 @@ export async function GET(req) {
 
       // Add the client with a reference to this controller
       const client = { controller };
+
       addClient(client);
+
+      console.log(`client added: ${client}`)
 
       // Send an initial message
       sendMessage('Connected to SSE');
