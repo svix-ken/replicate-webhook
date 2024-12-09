@@ -5,11 +5,12 @@ export async function GET(req) {
 
   const stream = new ReadableStream({
     start(controller) {
+      // Define sendMessage inside the start method to access controller
       const sendMessage = (message) => {
         controller.enqueue(encoder.encode(`data: ${message}\n\n`));
       };
 
-      // Add the client
+      // Add the client with a reference to this controller
       const client = { controller };
       addClient(client);
 
