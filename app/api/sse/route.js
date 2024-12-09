@@ -1,43 +1,40 @@
-// app/api/sse/route.js
 import { addClient, removeClient } from '@/app/utils/sseConnections';
 
-// Define the GET method for the SSE connection
 export async function GET(req) {
-  // Create a new response with the correct headers for SSE
-  const headers = new Headers();
-  headers.set('Content-Type', 'text/event-stream');
-  headers.set('Cache-Control', 'no-cache');
-  headers.set('Connection', 'keep-alive');
+  const encoder = new TextEncoder();
 
-  // Create a readable stream for SSE
   const stream = new ReadableStream({
     start(controller) {
-      // This is where we will listen to client disconnects
-      const client = { res: controller };
+      const sendMessage = (message) => {
+        controller.enqueue(encoder.encode(`data: ${message}\n\n`));
+      };
+
+      // Add the client
+      const client = { controller };
       addClient(client);
 
-      // Cleanup when the client disconnects
+      // Send an initial message
+      sendMessage('Connected to SSE');
+
+      // Heartbeat to keep the connection alive
+      const heartbeatInterval = setInterval(() => {
+        sendMessage('keep-alive');
+      }, 30000);
+
+      // Cleanup on client disconnect
       req.signal.addEventListener('abort', () => {
-        console.log(client)
+        clearInterval(heartbeatInterval);
+        removeClient(client);
+        controller.close();
       });
-    }
+    },
   });
 
-  const sendMessage = (message) => {
-    controller.enqueue(encoder.encode(`data: ${message}\n\n`))
-  }
-
-  // Send an initial message
-  sendMessage('Connected to SSE')
-
-  const heartbeatInterval = setInterval(() => {
-    sendMessage("keep alive") // Sending a comment to keep the connection alive
-  }, 30000); // 30 seconds
-
-  req.signal.addEventListener('abort', () => {
-    clearInterval(heartbeatInterval);
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+    },
   });
-
-  // Return the response with the stream and headers
-  return new Response(stream, { headers });
 }

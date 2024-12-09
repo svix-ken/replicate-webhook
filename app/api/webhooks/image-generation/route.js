@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 import { broadcast } from '@/app/utils/sseConnections';
-import { imageOptimizer } from 'next/dist/server/image-optimizer';
 
 export async function POST(req) {
     const webhook_id = req.headers.get("webhook-id") ?? "";
@@ -32,11 +31,19 @@ export async function POST(req) {
     }
 
     // Parse the webhook payload
-    const parsedBody = JSON.parse(body);
-    broadcast({
-        type: "image",
-        data: parsedBody,
-    });
-
-    return new Response("OK", { status: 200 });
+    try {
+        const parsedBody = JSON.parse(body);
+    
+        // Broadcast the parsed data to all connected SSE clients
+        broadcast({
+          type: 'image',
+          data: parsedBody,
+        });
+    
+        console.log('Broadcasted webhook data to clients:', parsedBody);
+        return new Response('OK', { status: 200 });
+      } catch (err) {
+        console.error('Failed to parse webhook payload:', err.message);
+        return new Response('Internal Server Error', { status: 500 });
+      }
 }
