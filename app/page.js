@@ -32,10 +32,10 @@ export default function Home() {
     let eventSource = new EventSource('/api/sse');
 
     eventSource.onmessage = (event) => {
-      console.log(event)
-      event.type === "image" ? 
-        setPrediction(event.data) :
-        setTranscription(event.data)
+      console.log(event.data)
+      event.data.type === "image" ? 
+        setPrediction(event.data.data) :
+        setTranscription(event.data.data)
     };
 
     eventSource.onerror = (error) => {

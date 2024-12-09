@@ -17,10 +17,15 @@ export const removeClient = (client) => {
 
 // Broadcast data to all connected clients
 export const broadcast = (data) => {
+
+  console.log(data)
+
   if (clients.length === 0) {
     console.log('No clients connected to broadcast to');
     return;
   }
+
+  console.log("found clients")
 
   const message = `data: ${JSON.stringify(data)}\n\n`;
   const encoder = new TextEncoder();

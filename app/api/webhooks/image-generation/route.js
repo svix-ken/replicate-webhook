@@ -40,7 +40,6 @@ export async function POST(req) {
           data: parsedBody,
         });
     
-        console.log('Broadcasted webhook data to clients:', parsedBody);
         return new Response('OK', { status: 200 });
       } catch (err) {
         console.error('Failed to parse webhook payload:', err.message);

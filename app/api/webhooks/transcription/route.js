@@ -11,7 +11,6 @@ export async function POST(req) {
     const secret = process.env.WEBHOOK_SECRET;
 
     // Decode the secret
-    console.log(`secret: ${secret}`)
     const secretBytes = Buffer.from(secret.split('_')[1], "base64");
     const computedSignature = crypto
         .createHmac('sha256', secretBytes)
@@ -21,8 +20,6 @@ export async function POST(req) {
     try {
         const expectedSignatures = webhook_signature.split(' ').map(sig => sig.split(',')[1]);
 
-        console.log(`expectedSignatures: ${expectedSignatures}`)
-        
         const isValid = expectedSignatures.some(expectedSignature => expectedSignature === computedSignature);
 
         if (!isValid) {
@@ -56,7 +53,7 @@ export async function POST(req) {
         
             const data = await response.json();
             if (response.ok) {
-              console.log("Replicate output:", data.output);
+              console.log("Replicate output:", data);
             } else {
               console.error("Error from API route:", data.error);
             }
