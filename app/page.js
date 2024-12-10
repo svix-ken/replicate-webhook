@@ -32,7 +32,7 @@ export default function Home() {
     let eventSource;
   
     const connect = () => {
-      eventSource = new EventSource('/api/sse');
+      eventSource = new EventSource('./api/sse');
   
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
