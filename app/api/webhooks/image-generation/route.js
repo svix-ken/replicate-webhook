@@ -33,12 +33,8 @@ export async function POST(req) {
     // Parse the webhook payload
     try {
         const parsedBody = JSON.parse(body);
-    
-        // Broadcast the parsed data to all connected SSE clients
-        broadcast({
-          type: 'image',
-          data: parsedBody,
-        });
+
+        // Persist the image in a future iteration
     
         return new Response('OK', { status: 200 });
       } catch (err) {

@@ -36,12 +36,6 @@ export async function POST(req) {
     if (parsedBody.status === "succeeded" && parsedBody.output?.text) {
         const transcription = parsedBody.output.text;
 
-        console.log("Received Transcription:", transcription);
-        broadcast({
-            type: "transcription",
-            data: transcription,
-        })
-
         try {
             const response = await fetch("https://replicate-webhook.vercel.app/api/text-to-image", {
                 method: "POST",
