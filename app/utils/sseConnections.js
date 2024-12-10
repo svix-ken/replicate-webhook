@@ -2,18 +2,23 @@ export const clients = [];
 
 // Add a new client connection
 export const addClient = (client) => {
-  clients.push(client);
-  console.log(`Client connected. Total clients: ${clients.length}`);
-};
+    if (!clients.includes(client)) {
+      clients.push(client);
+      console.log('Client added. Total clients:', clients.length);
+    } else {
+      console.log('Client already exists. Skipping addition.');
+    }
+};  
 
 // Remove a client connection
 export const removeClient = (client) => {
-  const index = clients.indexOf(client);
-  if (index !== -1) {
-    clients.splice(index, 1);
-    console.log(`Client disconnected. Total clients: ${clients.length}`);
-  }
+    const index = clients.indexOf(client);
+    if (index !== -1) {
+      clients.splice(index, 1);
+      console.log('Client removed. Total clients:', clients.length);
+    }
 };
+  
 
 // Broadcast data to all connected clients
 export const broadcast = (data) => {

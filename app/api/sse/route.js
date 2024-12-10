@@ -5,30 +5,34 @@ export async function GET(req) {
 
   const stream = new ReadableStream({
     start(controller) {
-      // Define sendMessage inside the start method to access controller
-      const sendMessage = (message) => {
-        controller.enqueue(encoder.encode(`data: ${message}\n\n`));
-      };
+      console.log('New SSE connection established.');
 
-      // Add the client with a reference to this controller
+      // Create a client object
       const client = { controller };
 
+      // Add the client to the clients array
       addClient(client);
+      console.log('Client added. Total clients:', clients.length);
 
-      console.log(`client added: ${client}`)
+      // Function to send a message to the client
+      const sendMessage = (message) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(message)}\n\n`));
+      };
 
-      // Send an initial message
-      sendMessage('Connected to SSE');
+      // Send an initial connection message
+      sendMessage({ type: 'info', message: 'Connected to SSE' });
 
       // Heartbeat to keep the connection alive
       const heartbeatInterval = setInterval(() => {
-        sendMessage('keep-alive');
+        sendMessage({ type: 'heartbeat', message: 'keep-alive' });
       }, 30000);
 
-      // Cleanup on client disconnect
+      // Cleanup on disconnect
       req.signal.addEventListener('abort', () => {
+        console.log('SSE client disconnected.');
         clearInterval(heartbeatInterval);
         removeClient(client);
+        console.log('Client removed. Total clients:', clients.length);
         controller.close();
       });
     },

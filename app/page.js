@@ -32,23 +32,28 @@ export default function Home() {
     let eventSource;
   
     const connect = () => {
-      eventSource = new EventSource('./api/sse');
+      eventSource = new EventSource('/api/sse');
   
       eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log(data);
-        if (data.type === 'image') {
-          setPrediction(data.data);
-        } else {
-          setTranscription(data.data);
+        try {
+          const data = JSON.parse(event.data);
+          console.log('Received data:', data);
+  
+          if (data.type === 'image') {
+            setPrediction(data.data);
+          } else {
+            setTranscription(data.data);
+          }
+        } catch (error) {
+          console.error('Error parsing SSE data:', error);
         }
       };
   
       eventSource.onerror = (error) => {
-        console.error('Error in SSE connection:', error);
-        // Close the current connection
+        console.error('SSE connection error:', error);
         eventSource.close();
-        // Attempt to reconnect after 3 seconds
+  
+        // Reconnect after 3 seconds
         setTimeout(() => {
           console.log('Reconnecting SSE...');
           connect();
@@ -56,15 +61,16 @@ export default function Home() {
       };
     };
   
-    connect(); // Establish the initial connection
+    connect(); // Initial connection
   
     return () => {
       if (eventSource) {
-        eventSource.close(); // Cleanup the connection on component unmount
-        console.log('SSE connection closed');
+        eventSource.close();
+        console.log('SSE connection closed.');
       }
     };
   }, []);
+  
   
  
   return (
