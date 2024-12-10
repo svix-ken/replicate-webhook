@@ -1,4 +1,4 @@
-import { addClient, removeClient } from '@/app/utils/sseConnections';
+import { addClient, removeClient, clients } from '@/app/utils/sseConnections';
 
 export async function GET(req) {
   const encoder = new TextEncoder();
